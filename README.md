@@ -3,4 +3,5 @@ create your own gingham [patterns](https://elizwangwastaken.github.io/ginggghamp
 
 pick the colors and make your pattern :)
 
-https://github.com/user-attachments/assets/ebf5a0e0-64fd-4d61-8915-7740a093abf5
+https://github.com/user-attachments/assets/d175c4be-2758-421d-af00-6619b1ba1e98
+
