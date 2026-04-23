@@ -213,9 +213,9 @@ function buildGrainLayer(totalW, totalH) {
   };
 }
 
-// Preview: tiles shown at actual squareWidth px — drag the slider to see bigger/smaller tiles.
-function buildPreviewSVG(containerSize) {
-  return buildSVG(state.squareWidth, state.squareHeight, containerSize, containerSize);
+// Preview: tiles shown at actual squareWidth px filling the full viewport.
+function buildPreviewSVG(w, h) {
+  return buildSVG(state.squareWidth, state.squareHeight, w, h);
 }
 
 // Export: 4 tiles per axis (8×8 cells at squareWidth px each).
@@ -228,10 +228,11 @@ function buildExportSVG() {
 
 // ── Render ──────────────────────────────────
 function render() {
-  const overlap     = approxOverlap();
-  const containerSz = previewEl.offsetWidth || 560;
+  const overlap = approxOverlap();
+  const w = window.innerWidth  || 1280;
+  const h = window.innerHeight || 800;
 
-  previewEl.innerHTML = buildPreviewSVG(containerSz);
+  previewEl.innerHTML = buildPreviewSVG(w, h);
 
   setSwatchColor(color1Preview, state.color1, state.color1Opacity);
   setSwatchColor(color2Preview, state.color2, state.color2Opacity);
@@ -617,11 +618,41 @@ function resetToDefaults() {
 
 resetBtn.addEventListener('click', resetToDefaults);
 
-// ── Resize via ResizeObserver ─────────────────
-const resizeObserver = new ResizeObserver(() => {
-  requestAnimationFrame(render);
-});
-resizeObserver.observe(previewEl);
+// ── Resize: re-render when viewport changes ───
+window.addEventListener('resize', () => { requestAnimationFrame(render); });
+
+// ── Draggable Panel ───────────────────────────
+(function initDrag() {
+  const panel  = document.getElementById('controlsPanel');
+  const handle = document.getElementById('panelDragHandle');
+
+  let startX, startY, startLeft, startTop, dragging = false;
+
+  handle.addEventListener('pointerdown', e => {
+    if (e.target.closest('input, button, label')) return;
+    dragging = true;
+    handle.setPointerCapture(e.pointerId);
+    const rect = panel.getBoundingClientRect();
+    startX    = e.clientX;
+    startY    = e.clientY;
+    startLeft = rect.left;
+    startTop  = rect.top;
+    e.preventDefault();
+  });
+
+  handle.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const dx   = e.clientX - startX;
+    const dy   = e.clientY - startY;
+    const maxL = window.innerWidth  - panel.offsetWidth;
+    const maxT = window.innerHeight - panel.offsetHeight;
+    panel.style.left = Math.max(0, Math.min(maxL, startLeft + dx)) + 'px';
+    panel.style.top  = Math.max(0, Math.min(maxT, startTop  + dy)) + 'px';
+  });
+
+  handle.addEventListener('pointerup',    () => { dragging = false; });
+  handle.addEventListener('pointercancel', () => { dragging = false; });
+})();
 
 // ── Init ─────────────────────────────────────
 overlapColorInput.value = multiplyBlend(state.color1, state.color2);
