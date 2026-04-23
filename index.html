@@ -11,191 +11,185 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app">
 
-    <header class="app-header">
-      <div class="logo">
-        <div class="logo-icon">
-          <div class="logo-grid">
-            <span style="background:#e63946"></span>
-            <span style="background:#fff"></span>
-            <span style="background:#fff"></span>
-            <span style="background:#e63946"></span>
-          </div>
-        </div>
-        <h1>Gingggggham Pattern Maker</h1>
+  <!-- Full-screen pattern canvas -->
+  <div id="preview" class="preview-canvas"></div>
+
+  <!-- Floating draggable controls panel -->
+  <div class="controls-panel" id="controlsPanel">
+
+    <!-- Drag handle / header -->
+    <div class="panel-drag-handle" id="panelDragHandle">
+      <div class="drag-grip" aria-hidden="true">
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
       </div>
-    </header>
-
-    <main class="app-body">
-
-      <!-- ── Controls ── -->
-      <aside class="controls-panel">
-
-        <!-- Mode: Square / Plaid -->
-        <section class="control-group">
-          <label class="control-label">Mode</label>
-          <div class="seg-control">
-            <button class="seg-btn active" data-mode="square">Square</button>
-            <button class="seg-btn" data-mode="plaid">Plaid</button>
-          </div>
-        </section>
-
-        <!-- Square Size -->
-        <section class="control-group">
-          <label class="control-label">Square Size</label>
-          <div class="axis-row">
-            <span class="axis-tag" id="widthAxisTag"></span>
-            <input type="range" id="squareWidthSlider" min="4" max="200" value="60" class="slider" aria-label="Square width" />
-            <div class="size-inline">
-              <input type="number" id="squareWidth" value="60" min="4" max="400" class="size-num" aria-label="Square width in pixels" />
-              <span class="unit" id="squareWidthUnit">px</span>
+      <div class="panel-handle-row">
+        <div class="logo">
+          <div class="logo-icon">
+            <div class="logo-grid">
+              <span style="background:#e63946"></span>
+              <span style="background:#fff"></span>
+              <span style="background:#fff"></span>
+              <span style="background:#e63946"></span>
             </div>
           </div>
-          <!-- Height row — plaid only -->
-          <div class="axis-row" id="heightSliderRow" style="display:none">
-            <span class="axis-tag">↕</span>
-            <input type="range" id="squareHeightSlider" min="4" max="200" value="60" class="slider" aria-label="Square height" />
-            <div class="size-inline">
-              <input type="number" id="squareHeight" value="60" min="4" max="400" class="size-num" aria-label="Square height in pixels" />
-              <span class="unit">px</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Color Palette -->
-        <section class="control-group">
-          <div class="palette-header">
-            <label class="control-label">Palette</label>
-            <button id="randomizePalette" class="randomize-btn" aria-label="Generate random palette">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="16 3 21 3 21 8"></polyline>
-                <line x1="4" y1="20" x2="21" y2="3"></line>
-                <polyline points="21 16 21 21 16 21"></polyline>
-                <line x1="15" y1="15" x2="21" y2="21"></line>
-              </svg>
-              Randomize
-            </button>
-          </div>
-          <div class="color-swatches">
-
-            <!-- Color 1 + opacity -->
-            <div class="color-swatch-item" data-target="color1">
-              <div class="swatch-preview" id="color1Preview"></div>
-              <div class="swatch-info">
-                <span class="swatch-label">Color 1</span>
-                <span class="swatch-hex" id="color1Hex">#E63946</span>
-              </div>
-              <input type="color" id="color1" value="#e63946" class="color-input" aria-label="Pick Color 1" />
-            </div>
-            <div class="opacity-row">
-              <span class="opacity-label">Opacity</span>
-              <input type="range" id="color1Opacity" min="0" max="100" value="100" class="slider micro-slider" aria-label="Color 1 opacity" />
-              <span class="opacity-value" id="color1OpacityValue">100%</span>
-            </div>
-
-            <!-- Color 2 + opacity -->
-            <div class="color-swatch-item" data-target="color2">
-              <div class="swatch-preview" id="color2Preview"></div>
-              <div class="swatch-info">
-                <span class="swatch-label">Color 2</span>
-                <span class="swatch-hex" id="color2Hex">#457B9D</span>
-              </div>
-              <input type="color" id="color2" value="#457b9d" class="color-input" aria-label="Pick Color 2" />
-            </div>
-            <div class="opacity-row">
-              <span class="opacity-label">Opacity</span>
-              <input type="range" id="color2Opacity" min="0" max="100" value="100" class="slider micro-slider" aria-label="Color 2 opacity" />
-              <span class="opacity-value" id="color2OpacityValue">100%</span>
-            </div>
-
-            <!-- Background -->
-            <div class="color-swatch-item" data-target="bgColor">
-              <div class="swatch-preview" id="bgColorPreview"></div>
-              <div class="swatch-info">
-                <span class="swatch-label">Background</span>
-                <span class="swatch-hex" id="bgColorHex">#FFFFFF</span>
-              </div>
-              <input type="color" id="bgColor" value="#ffffff" class="color-input" aria-label="Pick background color" />
-            </div>
-
-            <!-- Overlap (toggle auto/custom) -->
-            <div class="color-swatch-item overlap-swatch" data-target="overlapColor">
-              <div class="swatch-preview" id="overlapColorPreview"></div>
-              <div class="swatch-info">
-                <span class="swatch-label">Overlap</span>
-                <span class="swatch-hex" id="overlapColorHex">—</span>
-              </div>
-              <div class="overlap-controls">
-                <label class="toggle-label" title="Auto uses CSS multiply blend mode">
-                  <input type="checkbox" id="overlapAuto" checked class="toggle-input" aria-label="Auto multiply blend" />
-                  <span class="toggle-track"></span>
-                </label>
-                <!-- Hidden until auto is OFF -->
-                <input type="color" id="overlapColor" value="#8b0000" class="color-input overlap-picker" aria-label="Pick custom overlap color" />
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- Noise / Texture -->
-        <section class="control-group">
-          <label class="control-label">Noise <span class="label-note">grain texture</span></label>
-          <div class="axis-row">
-            <input type="range" id="noiseAmount" min="0" max="100" value="0" class="slider" aria-label="Noise grain amount" />
-            <div class="size-inline">
-              <input type="number" id="noiseAmountNum" value="0" min="0" max="100" class="size-num" aria-label="Noise amount in percent" />
-              <span class="unit">%</span>
-            </div>
-          </div>
-        </section>
-
-        <div class="divider"></div>
-
-        <!-- Export -->
-        <section class="control-group export-group">
-          <label class="control-label">Export</label>
-          <div class="export-buttons">
-            <button id="copySVG" class="btn btn-secondary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-              Copy SVG
-            </button>
-            <button id="downloadPNG" class="btn btn-primary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Download PNG
-            </button>
-          </div>
-          <button id="resetSettings" class="btn btn-ghost">Reset to defaults</button>
-        </section>
-
-      </aside>
-
-      <!-- ── Preview ── -->
-      <div class="preview-panel">
-        <div class="preview-header">
-          <span class="preview-label">Live Preview</span>
-          <div class="preview-meta" id="previewMeta">60px squares</div>
+          <span class="panel-title">Gingggggham</span>
         </div>
+        <div class="preview-meta" id="previewMeta">60px squares</div>
+      </div>
+    </div>
 
-        <div class="preview-container">
-          <div id="preview" class="preview-canvas"></div>
-        </div>
+    <!-- Mode: Square / Plaid -->
+    <section class="control-group">
+      <label class="control-label">Mode</label>
+      <div class="seg-control">
+        <button class="seg-btn active" data-mode="square">Square</button>
+        <button class="seg-btn" data-mode="plaid">Plaid</button>
+      </div>
+    </section>
 
-        <div class="preview-footer">
-          <div class="color-strip" id="colorStrip"></div>
-          <span class="pattern-note" id="patternNote">Tile: 120 × 120 px · repeating</span>
+    <!-- Square Size -->
+    <section class="control-group">
+      <label class="control-label">Square Size</label>
+      <div class="axis-row">
+        <span class="axis-tag" id="widthAxisTag"></span>
+        <input type="range" id="squareWidthSlider" min="4" max="200" value="60" class="slider" aria-label="Square width" />
+        <div class="size-inline">
+          <input type="number" id="squareWidth" value="60" min="4" max="400" class="size-num" aria-label="Square width in pixels" />
+          <span class="unit" id="squareWidthUnit">px</span>
         </div>
       </div>
+      <!-- Height row — plaid only -->
+      <div class="axis-row" id="heightSliderRow" style="display:none">
+        <span class="axis-tag">↕</span>
+        <input type="range" id="squareHeightSlider" min="4" max="200" value="60" class="slider" aria-label="Square height" />
+        <div class="size-inline">
+          <input type="number" id="squareHeight" value="60" min="4" max="400" class="size-num" aria-label="Square height in pixels" />
+          <span class="unit">px</span>
+        </div>
+      </div>
+    </section>
 
-    </main>
+    <!-- Color Palette -->
+    <section class="control-group">
+      <div class="palette-header">
+        <label class="control-label">Palette</label>
+        <button id="randomizePalette" class="randomize-btn" aria-label="Generate random palette">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="16 3 21 3 21 8"></polyline>
+            <line x1="4" y1="20" x2="21" y2="3"></line>
+            <polyline points="21 16 21 21 16 21"></polyline>
+            <line x1="15" y1="15" x2="21" y2="21"></line>
+          </svg>
+          Randomize
+        </button>
+      </div>
+      <div class="color-swatches">
+
+        <!-- Color 1 + opacity -->
+        <div class="color-swatch-item" data-target="color1">
+          <div class="swatch-preview" id="color1Preview"></div>
+          <div class="swatch-info">
+            <span class="swatch-label">Color 1</span>
+            <span class="swatch-hex" id="color1Hex">#E63946</span>
+          </div>
+          <input type="color" id="color1" value="#e63946" class="color-input" aria-label="Pick Color 1" />
+        </div>
+        <div class="opacity-row">
+          <span class="opacity-label">Opacity</span>
+          <input type="range" id="color1Opacity" min="0" max="100" value="100" class="slider micro-slider" aria-label="Color 1 opacity" />
+          <span class="opacity-value" id="color1OpacityValue">100%</span>
+        </div>
+
+        <!-- Color 2 + opacity -->
+        <div class="color-swatch-item" data-target="color2">
+          <div class="swatch-preview" id="color2Preview"></div>
+          <div class="swatch-info">
+            <span class="swatch-label">Color 2</span>
+            <span class="swatch-hex" id="color2Hex">#457B9D</span>
+          </div>
+          <input type="color" id="color2" value="#457b9d" class="color-input" aria-label="Pick Color 2" />
+        </div>
+        <div class="opacity-row">
+          <span class="opacity-label">Opacity</span>
+          <input type="range" id="color2Opacity" min="0" max="100" value="100" class="slider micro-slider" aria-label="Color 2 opacity" />
+          <span class="opacity-value" id="color2OpacityValue">100%</span>
+        </div>
+
+        <!-- Background -->
+        <div class="color-swatch-item" data-target="bgColor">
+          <div class="swatch-preview" id="bgColorPreview"></div>
+          <div class="swatch-info">
+            <span class="swatch-label">Background</span>
+            <span class="swatch-hex" id="bgColorHex">#FFFFFF</span>
+          </div>
+          <input type="color" id="bgColor" value="#ffffff" class="color-input" aria-label="Pick background color" />
+        </div>
+
+        <!-- Overlap (toggle auto/custom) -->
+        <div class="color-swatch-item overlap-swatch" data-target="overlapColor">
+          <div class="swatch-preview" id="overlapColorPreview"></div>
+          <div class="swatch-info">
+            <span class="swatch-label">Overlap</span>
+            <span class="swatch-hex" id="overlapColorHex">—</span>
+          </div>
+          <div class="overlap-controls">
+            <label class="toggle-label" title="Auto uses CSS multiply blend mode">
+              <input type="checkbox" id="overlapAuto" checked class="toggle-input" aria-label="Auto multiply blend" />
+              <span class="toggle-track"></span>
+            </label>
+            <!-- Hidden until auto is OFF -->
+            <input type="color" id="overlapColor" value="#8b0000" class="color-input overlap-picker" aria-label="Pick custom overlap color" />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Noise / Texture -->
+    <section class="control-group">
+      <label class="control-label">Noise <span class="label-note">grain texture</span></label>
+      <div class="axis-row">
+        <input type="range" id="noiseAmount" min="0" max="100" value="0" class="slider" aria-label="Noise grain amount" />
+        <div class="size-inline">
+          <input type="number" id="noiseAmountNum" value="0" min="0" max="100" class="size-num" aria-label="Noise amount in percent" />
+          <span class="unit">%</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Color strip -->
+    <div class="color-strip-row">
+      <div class="color-strip" id="colorStrip"></div>
+      <span class="pattern-note" id="patternNote">Tile: 120 × 120 px · repeating</span>
+    </div>
+
+    <!-- Export -->
+    <section class="control-group export-group">
+      <label class="control-label">Export</label>
+      <div class="export-buttons">
+        <button id="copySVG" class="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          Copy SVG
+        </button>
+        <button id="downloadPNG" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Download PNG
+        </button>
+      </div>
+      <button id="resetSettings" class="btn btn-ghost">Reset to defaults</button>
+    </section>
+
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
